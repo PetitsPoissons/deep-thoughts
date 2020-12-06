@@ -195,10 +195,17 @@ document.addEventListener('DOMContentLoaded', () => {
     let lastShipIndex = parseInt(shipNameWithLastId.substr(-1));
     // get the index of the div square where our mouse landed on the ship we grabbed
     let selectedShipIndex = parseInt(selectedShipNameWithIndex.substr(-1));
+    // get the grid id where the ship's last div will land if horizontal
+    let gridIdShipLastDivHorizontal =
+      parseInt(this.dataset.id) + lastShipIndex - selectedShipIndex;
+    // get the grid id where the ship's last div will land if vertical
+    let gridIdShipLastDivVertical =
+      parseInt(this.dataset.id) +
+      lastShipIndex * nbSquares -
+      selectedShipIndex * nbSquares;
 
     // determine off-limit divs for ships placed horizontally
     const notAllowedHorizontal = [
-      0,
       10,
       20,
       30,
@@ -208,7 +215,7 @@ document.addEventListener('DOMContentLoaded', () => {
       70,
       80,
       90,
-      1,
+      100,
       11,
       21,
       31,
@@ -218,6 +225,7 @@ document.addEventListener('DOMContentLoaded', () => {
       71,
       81,
       91,
+      101,
       2,
       12,
       22,
@@ -228,6 +236,7 @@ document.addEventListener('DOMContentLoaded', () => {
       72,
       82,
       92,
+      102,
       3,
       13,
       23,
@@ -238,31 +247,80 @@ document.addEventListener('DOMContentLoaded', () => {
       73,
       83,
       93,
+      103,
     ];
     let newNotAllowedHorizontal = notAllowedHorizontal.splice(
       0,
       10 * lastShipIndex
     );
 
-    if (isHorizontal) {
+    // determine off-limit divs for ships placed vertically
+    const notAllowedVertical = [
+      99,
+      98,
+      97,
+      96,
+      95,
+      94,
+      93,
+      92,
+      91,
+      90,
+      89,
+      88,
+      87,
+      86,
+      85,
+      84,
+      83,
+      82,
+      81,
+      80,
+      79,
+      78,
+      77,
+      76,
+      75,
+      74,
+      73,
+      72,
+      71,
+      70,
+      69,
+      68,
+      67,
+      66,
+      65,
+      64,
+      63,
+      62,
+      61,
+      60,
+    ];
+    let newNotAllowedVertical = notAllowedVertical.splice(
+      0,
+      10 * lastShipIndex
+    );
+
+    if (
+      isHorizontal &&
+      !newNotAllowedHorizontal.includes(gridIdShipLastDivHorizontal)
+    ) {
       for (let i = 0; i < draggedShipLength; i++) {
         userSquares[
           parseInt(this.dataset.id) - selectedShipIndex + i
         ].classList.add('taken', shipClass);
-        console.log(parseInt(this.dataset.id) - selectedShipIndex + i);
       }
-    } else if (!isHorizontal) {
+    } else if (
+      !isHorizontal &&
+      !newNotAllowedVertical.includes(gridIdShipLastDivVertical)
+    ) {
       for (let i = 0; i < draggedShipLength; i++) {
         userSquares[
           parseInt(this.dataset.id) -
             nbSquares * selectedShipIndex +
             nbSquares * i
         ].classList.add('taken', shipClass);
-        console.log(
-          parseInt(this.dataset.id) -
-            nbSquares * selectedShipIndex +
-            nbSquares * i
-        );
       }
     } else return;
 
